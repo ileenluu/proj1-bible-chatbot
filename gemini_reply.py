@@ -21,6 +21,7 @@ def get_gemini_reply(user_msg):
     User: {user_msg}
     Response:
     """
-    
+    print("[Gemini] Prompt sent:\n", prompt)  # 🔍 Print the full prompt
     response = gemini_model.generate_content(prompt)
+    print("[Gemini] Response received:\n", response.text.strip())  # 🔍 Print Gemini's reply
     return response.text.strip()
