@@ -2,7 +2,7 @@ import requests
 import os
 from gemini_reply import get_gemini_reply
 
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_BOT_TOKEN = os.getenv("JBIBLECHAT_TELEGRAM")
 BOT_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
 def process_telegram_update(update):
@@ -22,4 +22,6 @@ def process_telegram_update(update):
 
 def send_msg(chat_id, response_text):
     send_message_url = f"{BOT_URL}/sendMessage"
-    requests.post(send_message_url, data={"chat_id": chat_id, "text": response_text})
+    response = requests.post(send_message_url, data={"chat_id": chat_id, "text": response_text})
+    print("[SEND MSG] Status:", response.status_code)
+    print("[SEND MSG] Response:", response.json())
