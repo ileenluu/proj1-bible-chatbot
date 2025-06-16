@@ -1,4 +1,4 @@
 Flask
-twilio
+requests
 google-generativeai
 python-dotenv
