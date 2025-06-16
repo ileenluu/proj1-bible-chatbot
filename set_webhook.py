@@ -1,12 +1,13 @@
-import requests
 import os
-from dotenv import load_dotenv
+import requests
 
-load_dotenv()
-
-# Replace with your actual env var name
-BOT_TOKEN = os.getenv("JBIBLECHAT_TELEGRAM")  # or hardcode it if testing
+# Get Telegram bot token from environment
+BOT_TOKEN = os.getenv("JBIBLECHAT_TELEGRAM")
 WEBHOOK_URL = "https://bible-chatbot.onrender.com/telegram"
+
+# Optional: Validate token exists
+if not BOT_TOKEN:
+    raise ValueError("Telegram bot token is missing. Check your environment variable 'JBIBLECHAT_TELEGRAM'.")
 
 # Set the webhook
 response = requests.get(
@@ -14,5 +15,6 @@ response = requests.get(
     params={"url": WEBHOOK_URL}
 )
 
+# Print response for confirmation
 print("[Webhook Setup] Status:", response.status_code)
 print("[Webhook Setup] Response:", response.json())
