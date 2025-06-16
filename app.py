@@ -1,26 +1,15 @@
 from flask import Flask, request, Response
-from twilio.twiml.messaging_response import MessagingResponse
-from gemini_reply import get_gemini_reply
+# If these are your own functions, import from a local module (e.g., telegram_utils.py)
+from telegram_utils import process_telegram_update, send_msg
 import os
 
 app = Flask(__name__)
 
-@app.route("/whatsapp", methods=['POST'])
-def whatsapp_reply():
-    incomining_msg = request.form.get('Body', "")
-
-    # Get the Gemini-generated reply
-    try:
-        gemini_response = get_gemini_reply(incomining_msg)
-    except Exception as e:
-        gemini_response = "Sorry, there was an error processing your request. Please try again later."
-
-    # Crate Twilio Whatsapp response
-    resp = MessagingResponse()
-    msg = resp.message()
-    msg.body(gemini_response)
-
-    return str(resp)
+@app.route("/telegram", methods=['POST'])
+def telegram_webhook():
+    update = request.get_json()
+    process_telegram_update(update)
+    return 'OK', 200
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
