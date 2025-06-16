@@ -1,5 +1,8 @@
 import google.generativeai as genai
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Set up the Google Generative AI API key
 gemini_api_key = os.getenv("GEMINI_API_KEY")
@@ -9,7 +12,7 @@ genai.configure(api_key = gemini_api_key)
 def get_gemini_reply(user_msg):
 
     # Initialize the Google Gemini client
-    gemini_model = genai.GenerativeModel("gemini-1.5-pro")
+    gemini_model = genai.GenerativeModel("gemini-2.0-flash")
 
     prompt = f"""
     You are a Christian counselor chatbot. 
