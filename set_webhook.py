@@ -1,5 +1,8 @@
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Get Telegram bot token from environment
 BOT_TOKEN = os.getenv("JBIBLECHAT_TELEGRAM")
