@@ -1,13 +1,12 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import requests
 import os
-from gemini_reply import get_gemini_reply
+from gemini_reply import get_empathy_reply, get_verse_references
+from web_bible_api import get_web_verse
+
 
 TELEGRAM_BOT_TOKEN = os.getenv("JBIBLECHAT_TELEGRAM")
 BOT_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}"
 
-# Store user version preferences in memory (for production, use database)
-user_versions = {}
 
 def process_telegram_update(update):
     if "message" in update and "text" in update["message"]:
@@ -17,58 +16,47 @@ def process_telegram_update(update):
         print(f"[RECEIVED] Chat ID: {chat_id}, Message: {user_msg}")
 
         if user_msg == "/start":
-            version = user_versions.get(chat_id)
-            version_note = f"\n\n📖 You previously selected *{version.upper()}*. You can change it anytime below." if version else ""
-
-            # Bible version selection buttons
-            keyboard = [
-                [InlineKeyboardButton("WEB", callback_data="set_version_WEB")],
-                [InlineKeyboardButton("KJV", callback_data="set_version_KJV")]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
-            send_msg(chat_id,
-                f"✨ *Welcome {user_name}! Please choose your preferred Bible version:*\n"
-                "📜 *KJV* - Classic Old English style\n"
-                "📘 *WEB* - Clear and modern English"
-                f"{version_note}",
-                reply_markup)
+            welcome_text = (
+                f"✨ Welcome to JBiblechat {user_name}!\n\n"
+                "✨ *Note:* Our shared Bible verses are from the *WEB (World English Bible)* — "
+                "a modern, public-domain translation. "
+                "For deeper study, we encourage you to refer to your own preferred Bible version."
+            )
+            send_msg(chat_id, welcome_text)
 
         elif user_msg == "/end":
-            response_text = f"Stay blessed {user_name}! See you next time!"
-            send_msg(chat_id, response_text)
+            bye_text = f"Stay blessed {user_name}! See you next time!"
+            send_msg(chat_id, bye_text)
 
         else:
-            # Use stored version or default to WEB
-            version = user_versions.get(chat_id, "WEB")
-            response_text = get_gemini_reply(user_msg, version)
-            send_msg(chat_id, response_text)
+            # Get empathy response from Gemini
+            empathy_text = get_empathy_reply(user_msg)
 
-    elif "callback_query" in update:
-        process_callback_query(update)
+            # Get verse references from Gemini
+            references = get_verse_references(user_msg)
 
+            # Format and fetch verse texts
+            verse_output = ""
+            for ref in references.split(","):
+                ref = ref.strip()
+                verse_text = get_web_verse(ref)
+                if verse_text:
+                    verse_output += f"\n\n*{ref} (WEB)*\n{verse_text}"
+                else:
+                    verse_output += f"\n\n*{ref} (WEB)*\n⚠️ Verse not found."
 
-# Handle button presses for version selection
-def process_callback_query(update):
-    query = update['callback_query']
-    chat_id = query['message']['chat']['id']
-    data = query['data']
+            # Final combined response
+            final_response = f"{empathy_text}\n\n{verse_output}"
+            send_msg(chat_id, final_response)
+        
 
-    if data.startswith('set_version_'):
-        version = data.split('_')[2]
-        user_versions[chat_id] = version
-        send_msg(chat_id, f"✅ Bible version set to: *{version.upper()}*. You can now ask your questions!")
-
-
-def send_msg(chat_id, response_text, reply_markup=None):
+def send_msg(chat_id, response_text):
     send_message_url = f"{BOT_URL}/sendMessage"
     data = {
         "chat_id": chat_id,
         "text": response_text,
-        "parse_mode": "Markdown"
+        "parse_mode": "Markdown",
     }
-    if reply_markup:
-        data["reply_markup"] = reply_markup.to_json()
     response = requests.post(send_message_url, data=data)
     print("[SEND MSG] Status:", response.status_code)
-    print("[SEND MSG] Response:", response.json())
+    print("[SEND_MSG] Response:", response.json())
