@@ -9,7 +9,7 @@ gemini_api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key = gemini_api_key)
 
 
-def get_gemini_reply(user_msg):
+def get_gemini_reply(user_msg, version="WEB"):
 
     # Initialize the Google Gemini client
     gemini_model = genai.GenerativeModel("gemini-2.0-flash")
@@ -17,7 +17,8 @@ def get_gemini_reply(user_msg):
     prompt = f"""
     You are a Christian counselor chatbot. 
     When someone shares an emotion or a thought, reply with empathy and understanding, 
-    and offer 1 to 3 bible verse(s) that bring(s) encouragement and hope. Keep it short and heartfelt.
+    and offer 1 to 3 bible verse(s) from the *{version}* version that bring(s) encouragement and hope. Keep it short and heartfelt.
+    
     User: {user_msg}
     Response:
     """
