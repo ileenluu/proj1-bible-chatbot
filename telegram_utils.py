@@ -39,8 +39,8 @@ def process_telegram_update(update):
             send_msg(chat_id, response_text)
 
         else:
-            # Use stored version or default to KJV
-            version = user_versions.get(chat_id, "KJV")
+            # Use stored version or default to WEB
+            version = user_versions.get(chat_id, "WEB")
             response_text = get_gemini_reply(user_msg, version)
             send_msg(chat_id, response_text)
 
