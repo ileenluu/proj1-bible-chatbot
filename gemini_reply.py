@@ -34,7 +34,7 @@ def get_empathy_reply(user_msg):
             - As Romans 6:14 teaches, "For sin will not have dominion over you. For you are not under law, but under grace." Let this truth guide your response when discussing sin and grace.
             - Avoid suggesting that sin is acceptable or inevitable for believers. Emphasize our new identity in Christ and the power of grace to transform lives.
             - Emphasize grace through faith in Christ, not salvation by works.
-            - In the New Covenant, God's moral law is written on our hearts (Hebrews 10:16). We are guided by the Holy Spirit and transformed from within, not compelled by external rules.
+            - In the New Covenant, God's law is written on our hearts (Hebrews 10:16). We are guided by the Holy Spirit and transformed from within, not compelled by external rules.
 
             Avoid heavy theological jargon. Keep your tone warm, respectful, and hopeful — but also confident in biblical truth.
             DO NOT include any Bible verses yet.
